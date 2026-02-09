@@ -67,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\PE_Green.Shader" />
+    <None Include="Assets\PE_ToneCorrction].shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
