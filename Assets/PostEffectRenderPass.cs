@@ -6,20 +6,26 @@ using UnityEngine.Rendering.Universal;
 
 public class PostEffectRenderPass : ScriptableRenderPass
 {
-    private Material material_ = null;
+    // ポストエフェクト用マテリアル
+    private Material blurMaterial_ = null;
+    // Blit用のパススルーマテリアル
+    private Material passThroughMaterial_ = null;
 
-    public PostEffectRenderPass(Material postEffectMaterial)
+    public PostEffectRenderPass(Material blurMaterial, Material passThroughMaterial)
     {
-        // Shaderからマテリアルを生成
-        material_ = postEffectMaterial;
+        // コンストラクタ引数からマテリアルを取得
+        blurMaterial_ = blurMaterial;
+        passThroughMaterial_ = passThroughMaterial;
     }
+
 
     // RenderGraphへの描画設定や描画実行など一連の操作
     public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
     {
-        if (material_ == null)
+        // どちらかのマテリアルが null であれば
+        if (blurMaterial_ == null || passThroughMaterial_ == null)
         {
-            // materialがnullならば従来通りの描画を行う
+            // material_がnullならば従来通りの描画を行う
             base.RecordRenderGraph(renderGraph, frameData);
             return;
         }
@@ -40,21 +46,36 @@ public class PostEffectRenderPass : ScriptableRenderPass
         TextureDesc tempDesc = renderGraph.GetTextureDesc(cameraTexture);
 
         // 名前などの一部設定は書き換える
-        tempDesc.name = "GreenTexture";
+        tempDesc.name = "_OrigTempTexture";
 
         //　深度値は使わない
         tempDesc.depthBufferBits = 0;
 
-        // 仮テクスチャを作成
-        TextureHandle tempTexture = renderGraph.CreateTexture(tempDesc);
+        // 元サイズの一時テクスチャ
+        TextureHandle origTempTexture = renderGraph.CreateTexture(tempDesc);
 
-        // カメラテクスチャにmaterialを適用し仮テクスチャに出力する設定を作成
-        RenderGraphUtils.BlitMaterialParameters blitMaterialParameters = new RenderGraphUtils.BlitMaterialParameters(cameraTexture, tempTexture, material_, 0);
+        // 縮小サイズの一時テクスチャ
+        tempDesc.name = "_SmallTempTexture";
 
-        // その他の設定をURPに適用
-        renderGraph.AddBlitPass(blitMaterialParameters, "BlitGreenPostEffect");
+        int div = 2;
+        tempDesc.width /= div;
+        tempDesc.height /= div;
 
-        // URPがポストエフェクトを元のカメラテクスチャにコピーする
-        renderGraph.AddCopyPass(tempTexture, cameraTexture, "CopyGreenPostEffect");
+        TextureHandle smallTempTexture = renderGraph.CreateTexture(tempDesc);
+
+        // カメラテクスチャにmaterialを適用し仮テクスチャに出力する(小さくする際にブラーを適用)
+        RenderGraphUtils.BlitMaterialParameters downSampleBlitMaterialParameters = new RenderGraphUtils.BlitMaterialParameters(cameraTexture, smallTempTexture, blurMaterial_, 0);
+
+        // その設定を URP に適用
+        renderGraph.AddBlitPass(downSampleBlitMaterialParameters, "DownSamplingBlitBlur");
+
+        // PassThrough を使ってサイズを元に戻す
+        RenderGraphUtils.BlitMaterialParameters upSampleBlitMaterialParameters = new RenderGraphUtils.BlitMaterialParameters(smallTempTexture, origTempTexture, passThroughMaterial_, 0);
+
+        // その設定を URP に適用
+        renderGraph.AddBlitPass(upSampleBlitMaterialParameters, "UpSamplingBlitBlur");
+
+        // cameraTexture に戻す
+        renderGraph.AddCopyPass(origTempTexture, cameraTexture, "CopyBlur");
     }
 }

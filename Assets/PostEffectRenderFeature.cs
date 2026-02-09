@@ -3,9 +3,13 @@ using UnityEngine.Rendering.Universal;
 
 public class PostEffectRenderFeature : ScriptableRendererFeature
 {
-    // ポストエフェクト計算用のマテリアル
+    // ポストエフェクト用マテリアル
     [SerializeField]
-    private Material postEffectMaterial_;
+    private Material blurMaterial_;
+
+    // Blit用マテリアル
+    [SerializeField]
+    private Material passThroughMaterial_;
 
     // URPに渡すRenderPass
     private PostEffectRenderPass renderPass_;
@@ -14,7 +18,7 @@ public class PostEffectRenderFeature : ScriptableRendererFeature
     public override void Create()
     {
         // RenderPassを生成
-        renderPass_ = new PostEffectRenderPass(postEffectMaterial_);
+        renderPass_ = new PostEffectRenderPass(blurMaterial_, passThroughMaterial_);
 
         // レンダリング完了後、他のポストエフェクトが適用される例
         renderPass_.renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing;

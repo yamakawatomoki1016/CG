@@ -71,10 +71,13 @@
     <Compile Include="Assets\ToneMappingRnderPass.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\13_01AverageBlur.shader" />
     <None Include="Assets\12_ToneMapping\HDRColors\00_HDRColor.shader" />
     <None Include="Assets\12_ToneMapping\RenderScripts\PE_ClippingChecker.shader" />
     <None Include="Assets\PE_ToneMapping.shader" />
+    <None Include="Assets\PE_PassThrough.shader" />
     <None Include="Assets\PE_Green.Shader" />
+    <None Include="Assets\13_02GaussianBlur.shader" />
     <None Include="Assets\PE_ToneCorrction].shader" />
   </ItemGroup>
   <ItemGroup>
