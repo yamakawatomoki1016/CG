@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82ec662b6e7b10743b1b43dfc27ac1cc, type: 3}
   m_Name: PostEffectRenderFeature
   m_EditorClassIdentifier: Assembly-CSharp::PostEffectRenderFeature
-  m_Active: 0
-  postEffectMaterial_: {fileID: 2100000, guid: fc56503efa9869c448a35537ebc5d13e, type: 2}
+  m_Active: 1
+  blurMaterial_: {fileID: 2100000, guid: 020860df4343ca44da817a9a63b24162, type: 2}
+  passThroughMaterial_: {fileID: 2100000, guid: 26048452a5860eb4681fd4a98f4498cc, type: 2}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62c9c65cf3354c93be831c8bc075510, type: 3}
   m_Name: ScreenSpaceAmbientOcclusion
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   m_Settings:
     AOMethod: 0
     Downsample: 0
