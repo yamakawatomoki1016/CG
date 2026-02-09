@@ -69,6 +69,24 @@ ScaffoldingReadMe.txt
 # StyleCop
 StyleCopReport.xml
 
+# === Unity ===
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# === Visual Studio / Rider ===
+.vs/
+.vscode/
+.idea/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
 # Files built by Visual Studio
 *_i.c
 *_p.c
